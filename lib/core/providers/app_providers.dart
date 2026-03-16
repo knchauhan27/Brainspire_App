@@ -2,13 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod_annotation/flutter_riverpod_annotation.dart';
 
-// TODO: Import these when auth is implemented
-// import 'package:brainspire/features/auth/data/models/user_model.dart';
-// import 'package:brainspire/features/auth/data/auth_repository_impl.dart';
-// import 'package:brainspire/core/services/device_fingerprint_service.dart';
-// import 'package:brainspire/core/services/pdf_export_service.dart';
-// import 'package:brainspire/core/services/storage_service.dart';
-
 part 'app_providers.g.dart';
 
 /// Supabase client provider
@@ -16,48 +9,38 @@ final supabaseClientProvider = Provider<SupabaseClient>((ref) {
   return Supabase.instance.client;
 });
 
-/// TODO: Current authenticated user provider
-/// Uncomment and implement when auth is ready
-// @riverpod
-// Future<UserModel?> currentUser(CurrentUserRef ref) async {
-//   // TODO: Implement logic to fetch current user from auth state
-//   // return ref.read(authRepositoryProvider).getCurrentUser();
-//   return null;
-// }
+/// Auth state provider - tracks if user is authenticated
+@riverpod
+Stream<AuthState> authStateStream(AuthStateStreamRef ref) {
+  return Supabase.instance.client.auth.onAuthStateChange;
+}
 
-/// TODO: Current user ID provider
-/// Uncomment and implement when auth is ready
-// @riverpod
-// String? userId(UserIdRef ref) {
-//   return ref.watch(currentUserProvider)?.id;
-// }
+/// Current user provider
+@riverpod
+Future<User?> currentUser(CurrentUserRef ref) async {
+  const Duration timeout = Duration(seconds: 5);
+  try {
+    return await Supabase.instance.client.auth.currentUser.timeout(
+          timeout,
+          onTimeout: () => null,
+        ) ??
+        Supabase.instance.client.auth.currentUser;
+  } catch (e) {
+    return null;
+  }
+}
 
-/// TODO: Is user premium provider
-/// Uncomment and implement when auth is ready
-// @riverpod
-// Future<bool> isUserPremium(IsUserPremiumRef ref) async {
-//   // TODO: Implement logic to check if user is premium
-//   return false;
-// }
+/// User ID provider - gets current logged-in user's ID
+@riverpod
+String? userId(UserIdRef ref) {
+  return Supabase.instance.client.auth.currentUser?.id;
+}
 
-/// PDF Export Service Provider
-// TODO: Uncomment when implementing PDF export
-// @riverpod
-// PDFExportService pdfExportService(PdfExportServiceRef ref) {
-//   return PDFExportService();
-// }
-
-/// Storage Service Provider
-// TODO: Uncomment when implementing storage
-// @riverpod
-// StorageService storageService(StorageServiceRef ref) {
-//   final supabase = ref.watch(supabaseClientProvider);
-//   return StorageService(supabase);
-// }
-
-/// Device Fingerprint Service Provider
-// TODO: Uncomment when implementing device fingerprinting
-// @riverpod
+/// Is user authenticated provider
+@riverpod
+bool isUserAuthenticated(IsUserAuthenticatedRef ref) {
+  return Supabase.instance.client.auth.currentUser != null;
+}
 // Future<String> deviceFingerprint(DeviceFingerprintRef ref) async {
 //   final service = DeviceFingerprintService();
 //   return service.getFingerprint();

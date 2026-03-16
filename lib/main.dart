@@ -1,69 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'app.dart';
 
-void main() {
-  runApp(const BrainspireApp());
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class BrainspireApp extends StatelessWidget {
-  const BrainspireApp({super.key});
+  // Initialize Supabase
+  // TODO: Replace with your Supabase URL and anon key from your project
+  await Supabase.initialize(
+    url: const String.fromEnvironment(
+      'SUPABASE_URL',
+      defaultValue: 'https://your-project.supabase.co',
+    ),
+    anonKey: const String.fromEnvironment(
+      'SUPABASE_ANON_KEY',
+      defaultValue: 'your-anon-key',
+    ),
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Brainspire',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeScreen(),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  final List<String> subjects = const [
-    "Anatomy",
-    "Physiology",
-    "Biochemistry",
-    "Pathology",
-    "Pharmacology",
-    "Microbiology",
-    "ENT",
-    "Ophthalmology",
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Brainspire")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 20,
-            mainAxisSpacing: 20,
-          ),
-          itemCount: subjects.length,
-          itemBuilder: (context, index) {
-            return Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              elevation: 5,
-              child: Center(
-                child: Text(
-                  subjects[index],
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
+  runApp(const ProviderScope(child: BrainspireApp()));
 }

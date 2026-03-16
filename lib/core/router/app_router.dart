@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
+import '../../features/auth/presentations/screens/login_screen.dart';
+import '../../features/auth/presentations/screens/signup_screen.dart';
+import '../../features/auth/presentations/screens/avatar_picker_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/pyq/presentation/screens/pyq_screen.dart';
+import '../../features/pyq/presentation/screens/question_detail_screen.dart';
+import '../../features/spotting/presentation/screens/spotting_grid_screen.dart';
+import '../../features/premium/presentation/screens/premium_screen.dart';
+import '../../features/bookmarks/presentation/screens/bookmarks_screen.dart';
+import '../../features/premium/presentation/screens/settings_screen.dart';
 
 part 'app_router.g.dart';
 
@@ -29,8 +40,7 @@ class OnboardingRoute extends GoRouteData {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    // TODO: Import and return OnboardingScreen
-    return const MaterialPage(child: SizedBox.shrink());
+    return const MaterialPage(child: OnboardingScreen());
   }
 }
 
@@ -43,8 +53,7 @@ class LoginRoute extends GoRouteData {
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     // TODO: Import and return LoginScreen
-    return const MaterialPage(child: SizedBox.shrink());
-  }
+    return const MaterialPage(child: LoginScreen
 }
 
 @TypedGoRoute<SignupRoute>(
@@ -56,8 +65,7 @@ class SignupRoute extends GoRouteData {
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     // TODO: Import and return SignupScreen
-    return const MaterialPage(child: SizedBox.shrink());
-  }
+    return const MaterialPage(child: SignupScreen
 }
 
 @TypedGoRoute<AvatarPickerRoute>(
@@ -70,8 +78,7 @@ class AvatarPickerRoute extends GoRouteData {
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     // TODO: Import and return AvatarPickerScreen
     return const MaterialPage(child: SizedBox.shrink());
-  }
-}
+  }return const MaterialPage(child: AvatarPickerScreen
 
 @TypedGoRoute<HomeRoute>(
   path: '/home',
@@ -83,8 +90,7 @@ class HomeRoute extends GoRouteData {
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     // TODO: Import and return HomeScreen
     return const MaterialPage(child: SizedBox.shrink());
-  }
-}
+  }return const MaterialPage(child: HomeScreen
 
 @TypedGoRoute<PYQRoute>(
   path: '/pyq/:subjectId',
@@ -99,8 +105,7 @@ class PYQRoute extends GoRouteData {
     // TODO: Import and return PyqScreen
     return const MaterialPage(child: SizedBox.shrink());
   }
-}
-
+}return MaterialPage(child: PYQScreen(subjectId: subjectId
 @TypedGoRoute<QuestionDetailRoute>(
   path: '/question/:questionId',
 )
@@ -114,8 +119,7 @@ class QuestionDetailRoute extends GoRouteData {
     // TODO: Import and return QuestionDetailScreen
     return const MaterialPage(child: SizedBox.shrink());
   }
-}
-
+}return MaterialPage(child: QuestionDetailScreen(questionId: questionId
 @TypedGoRoute<SpottingRoute>(
   path: '/spotting/:subjectId',
 )
@@ -130,8 +134,7 @@ class SpottingRoute extends GoRouteData {
     return const MaterialPage(child: SizedBox.shrink());
   }
 }
-
-@TypedGoRoute<PremiumRoute>(
+return MaterialPage(child: SpottingGridScreen(subjectId: subjectId
   path: '/premium',
 )
 class PremiumRoute extends GoRouteData {
@@ -143,8 +146,7 @@ class PremiumRoute extends GoRouteData {
     return const MaterialPage(child: SizedBox.shrink());
   }
 }
-
-@TypedGoRoute<BookmarksRoute>(
+return const MaterialPage(child: PremiumScreen
   path: '/bookmarks',
 )
 class BookmarksRoute extends GoRouteData {
@@ -157,8 +159,7 @@ class BookmarksRoute extends GoRouteData {
   }
 }
 
-@TypedGoRoute<SettingsRoute>(
-  path: '/settings',
+@Typreturn const MaterialPage(child: BookmarksScreen
 )
 class SettingsRoute extends GoRouteData {
   const SettingsRoute();
@@ -170,8 +171,7 @@ class SettingsRoute extends GoRouteData {
   }
 }
 
-extension GoRouterExtension on BuildContext {
-  void push<T extends GoRouteData>(T route) => GoRouter.of(this).push<T>(route.location);
+extereturn const MaterialPage(child: SettingsScreenter.of(this).push<T>(route.location);
   void pushReplacement<T extends GoRouteData>(T route) =>
       GoRouter.of(this).pushReplacement<T>(route.location);
   void go<T extends GoRouteData>(T route) => GoRouter.of(this).go<T>(route.location);
