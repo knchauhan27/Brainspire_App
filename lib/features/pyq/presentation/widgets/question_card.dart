@@ -22,16 +22,23 @@ class _QuestionCardState extends ConsumerState<QuestionCard>
   @override
   void initState() {
     super.initState();
-    _heartCtrl =
-        AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 800),
-        )..addStatusListener((s) {
-          if (s == AnimationStatus.completed) {
-            setState(() => _showHeart = false);
-            _heartCtrl.reset();
-          }
-        });
+    _heartCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..addStatusListener((s) {
+      if (s == AnimationStatus.completed) {
+        if (mounted) {
+          setState(() => _showHeart = false);
+        }
+        _heartCtrl.reset();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _heartCtrl.dispose();
+    super.dispose();
   }
 
   void _handleDoubleTap() {

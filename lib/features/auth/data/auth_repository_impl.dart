@@ -16,11 +16,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       final resp = await _client.auth.signUp(email: email, password: password);
-      if (resp.user == null) return Left(AuthFailure('Signup failed'));
+      final user = resp.user;
+      if (user == null) return Left(AuthFailure('Signup failed'));
 
       // Insert profile row
       await _client.from('users').insert({
-        'id': resp.user!.id,
+        'id': user.id,
         'username': username,
         'email': email,
         'college': college,
@@ -28,10 +29,12 @@ class AuthRepositoryImpl implements AuthRepository {
         'avatar_id': 1,
       });
 
-      await _registerDeviceFingerprint(resp.user!.id);
-      return Right(UserModel.fromSupabase(resp.user!));
+      await _registerDeviceFingerprint(user.id);
+      return Right(UserModel.fromSupabase(user));
     } on PostgrestException catch (e) {
-      return Left(AuthFailure(e.message));
+      return Left(DataFailure(e.message));
+    } catch (e) {
+      return Left(UnknownFailure('Signup error: $e'));
     }
   }
 
@@ -45,28 +48,39 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-      if (resp.user == null) return Left(AuthFailure('Login failed'));
+      final user = resp.user;
+      if (user == null) return Left(AuthFailure('Login failed'));
 
-      // Check suspension
-      final profile = await _client
-          .from('users')
-          .select('is_suspended, is_premium')
-          .eq('id', resp.user!.id)
-          .single();
-
-      if (profile['is_suspended'] == true) {
-        await _client.auth.signOut();
-        return Left(
-          SuspendedFailure(
-            'Account suspended. Email support@brainspire.in to restore access.',
-          ),
-        );
+      // Check suspension - use try-catch to handle query errors
+      try {
+        final profileList = await _client
+            .from('users')
+            .select('is_suspended, is_premium')
+            .eq('id', user.id);
+        
+        if (profileList.isEmpty) {
+          return Left(DataFailure('User profile not found'));
+        }
+        
+        final profile = profileList.first;
+        if (profile['is_suspended'] == true) {
+          await _client.auth.signOut();
+          return Left(
+            SuspendedFailure(
+              'Account suspended. Email support@brainspire.in to restore access.',
+            ),
+          );
+        }
+      } catch (e) {
+        return Left(DataFailure('Failed to fetch user profile: $e'));
       }
 
-      await _registerDeviceFingerprint(resp.user!.id);
-      return Right(UserModel.fromSupabase(resp.user!));
+      await _registerDeviceFingerprint(user.id);
+      return Right(UserModel.fromSupabase(user));
     } on AuthException catch (e) {
       return Left(AuthFailure(e.message));
+    } catch (e) {
+      return Left(UnknownFailure('Login error: $e'));
     }
   }
 
